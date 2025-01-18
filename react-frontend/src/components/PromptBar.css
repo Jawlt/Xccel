@@ -1,0 +1,42 @@
+.prompt-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 40px;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  background-color: rgba(141, 44, 74, 0.1);
+  border-radius: 25px;
+  padding: 10px;
+  transform: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.prompt-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #8D2C4A;
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+.prompt-input::placeholder {
+  color: rgba(141, 44, 74, 0.6);
+}
+
+.mic-button,
+.send-button {
+  background: none;
+  border: none;
+  color: #8D2C4A;
+  padding: 10px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mic-button:hover,
+.send-button:hover {
+  color: #DE478F;
+}
