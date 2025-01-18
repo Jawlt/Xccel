@@ -136,3 +136,9 @@ temp/
 # JetBrains IDEs (e.g., WebStorm, IntelliJ IDEA)
 
 .idea/
+
+# Python-related files
+
+venv/
+*.pyc
+__pycache__/
