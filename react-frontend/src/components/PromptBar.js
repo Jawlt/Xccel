@@ -29,10 +29,10 @@ const PromptBar = ({ onSubmit }) => {
         className="prompt-input"
       />
       <button type="button" className="mic-button" onClick={handleMicClick}>
-        <FontAwesomeIcon icon={faMicrophone} />
+        <FontAwesomeIcon icon={faMicrophone} size="2x" />
       </button>
       <button type="submit" className="send-button">
-        <FontAwesomeIcon icon={faPaperPlane} />
+        <FontAwesomeIcon icon={faPaperPlane} size="2x" />
       </button>
     </form>
   );

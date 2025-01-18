@@ -27,7 +27,7 @@ const Menu = ({ searches = [], onClose }) => {
           <input
             type="password"
             className="api-key-input"
-            placeholder="Enter your OpenAI API key"
+            placeholder="****************"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
           />
