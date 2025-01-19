@@ -1,6 +1,6 @@
 .user-profile {
   position: absolute;
-  top: 20px;
+  top: 40px; /* Increased from 20px to 40px */
   right: 20px;
   z-index: 1001;
 }
