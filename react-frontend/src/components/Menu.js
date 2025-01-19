@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Menu.css';
 
-const Menu = ({ searches = [], onClose }) => {
+const Menu = ({ searches = [], logout }) => {
   const [apiKey, setApiKey] = useState('');
 
   const handleApiKeySubmit = () => {
@@ -37,8 +37,8 @@ const Menu = ({ searches = [], onClose }) => {
         </div>
       </div>
 
-      <button className="logout-button" onClick={onClose}>
-        LOG OUT
+      <button className="logout-button" onClick={() => logout({ returnTo: window.location.origin })}>
+        Log Out
       </button>
     </div>
   );
