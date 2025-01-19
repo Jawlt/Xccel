@@ -27,50 +27,6 @@
   max-width: 40px;
 }
 
-.api-key-section {
-  margin-bottom: 20px;
-}
-
-.api-key-label {
-  color: #8D2C4A;
-  font-size: 14px;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.api-key-input-container {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-.api-key-input {
-  flex: 1;
-  padding: 8px 8px;
-  background-color: rgba(141, 44, 74, 0.1);
-  border: 1px solid rgba(141, 44, 74, 0.2);
-  border-radius: 6px;
-  color: #8D2C4A;
-  font-size: 14px;
-  min-width: 50%;
-}
-
-.api-key-enter {
-  padding: 8px 8px;
-  background-color: #8D2C4A;
-  min-width: 16%;
-  border: none;
-  border-radius: 6px;
-  color: #FCF0D5;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.api-key-enter:hover {
-  background-color: #DE478F;
-}
-
 .logout-button {
   width: 100%;
   padding: 10px;

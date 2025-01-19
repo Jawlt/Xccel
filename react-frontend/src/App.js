@@ -9,7 +9,6 @@ import './App.css';
 
 function App() {
   const [results, setResults] = useState([]);
-  const [searches] = useState(['3:21', '3:21', '3:21']);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
   const [timestamps, setTimestamps] = useState([]);
@@ -107,7 +106,7 @@ function App() {
   return (
     <div className="App">
       <ProgressBar timestamps={timestamps} />
-      <UserProfile user={user} searches={searches} logout={logout}/>
+      <UserProfile user={user} logout={logout}/>
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

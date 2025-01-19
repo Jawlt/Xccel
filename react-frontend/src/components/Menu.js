@@ -1,45 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Menu.css';
 
-const Menu = ({ searches = [], logout }) => {
+const Menu = ({ user, logout }) => {
   const [apiKey, setApiKey] = useState('');
+  const [placeholderKey, setPlaceholderKey] = useState('');
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-  const handleApiKeySubmit = () => {
-    // Handle API key submission here
-    console.log('API Key submitted:', apiKey);
+  // Fetch the existing API key when component mounts
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      try {
+        const response = await axios.post(`${BACKEND_URL}/public/getOpenAiKey`, {
+          userId: user.id,
+        });
+        console.log(response.data.apiKey);
+        if (response.data && response.data.apiKey) {
+          setPlaceholderKey(response.data.apiKey);
+        } else {
+          console.error('No API key found');
+        }
+      } catch (error) {
+        console.error('Error fetching API key:', error);
+      }
+    };
+
+    fetchApiKey();
+  }, [user.id]);
+
+  // Handle API key submission
+  const handleApiKeySubmit = async (newApiKey) => {
+    try {
+      const response = await axios.post(
+        process.env.REACT_APP_AUTH0_API_IDENTIFIER + "/updateOpenAiKey",
+        {
+          userId: user.sub,
+          apiKey: newApiKey,
+        }
+      );
+      console.log("API Key update response:", response.data);
+    } catch (error) {
+      console.error("Error updating API key:", error.response?.data || error.message);
+    }
   };
 
   const handleLogout = () => {
-    // Determine the environment
     const isChromeExtension = window.location.protocol === 'chrome-extension:';
     const returnToUrl = isChromeExtension
-      ? `chrome-extension://${chrome.runtime.id}/logout` // For Chrome Extension
-      : `${window.location.origin}`; // For web app
+      ? `chrome-extension://${chrome.runtime.id}/logout`
+      : `${window.location.origin}`;
 
-    // Trigger the logout with the correct return URL
     logout({ returnTo: returnToUrl });
   };
 
   return (
     <div className="menu" onClick={(e) => e.stopPropagation()}>
-      <div className="menu-header"><img src="https://hackville.s3.us-east-1.amazonaws.com/hacklogo.png" alt="App Logo" className="menuLogo" /><h3>Xccel</h3></div>
-
-      <div className="api-key-section">
-        <label className="api-key-label">OPEN AI KEY</label>
-        <div className="api-key-input-container">
-          <input
-            type="password"
-            className="api-key-input"
-            placeholder="****************"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-          />
-          <button className="api-key-enter" onClick={handleApiKeySubmit}>
-            Save
-          </button>
-        </div>
+      <div className="menu-header">
+        <img src="https://hackville.s3.us-east-1.amazonaws.com/hacklogo.png" alt="App Logo" className="menuLogo" />
+        <h3>Xccel</h3>
       </div>
-
       <button className="logout-button" onClick={handleLogout}>
         Log Out
       </button>

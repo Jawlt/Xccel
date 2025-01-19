@@ -47,6 +47,7 @@ async def update_user(request: Request):
                 "name": name,
                 "email": email,
                 "picture": picture,
+                "apiKey": "",
             },
             "$setOnInsert": {"id": user_id},  # Set on insert only
         },
@@ -54,3 +55,46 @@ async def update_user(request: Request):
     )
 
     return {"message": "User added successfully."}
+
+@router.post("/updateOpenAiKey")
+async def update_open_ai_key(request: Request):
+    request_data = await request.json()
+    
+    user_id = request_data.get("userId")
+    api_key = request_data.get("apiKey")
+    print(api_key)
+
+    if not user_id or not api_key:
+        return {"error": "User ID and API key are required."}
+
+    # Update or insert the user's API key
+    users_collection.update_one(
+        {"id": user_id},
+        {"$set": {"apiKey": api_key}},
+        upsert=True
+    )
+
+    return {"message": "API key updated successfully."}
+
+@router.post("/getOpenAiKey")
+async def get_open_ai_key(request: Request):
+    request_data = await request.json()
+    
+    user_id = request_data.get("userId")
+
+    if not user_id:
+        return {"error": "User ID is required."}
+
+    # Find user in the database by userId and retrieve the apiKey field
+    user = users_collection.find_one({"id": user_id}, {"_id": 0, "apiKey": 1})
+
+    if not user:
+        return {"error": "User not found."}
+    
+    # Ensure user is a dictionary and safely get the 'apiKey' field
+    api_key = user.get("apiKey", "")
+
+    # Print for debugging purposes
+    print(f"Retrieved API Key for user {user_id}: {api_key}")
+
+    return {"apiKey": api_key}
