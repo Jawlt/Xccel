@@ -1,13 +1,14 @@
 .prompt-bar {
   position: relative;
   width: 94.2%;
+  height: 80px;
   top: 50px;
   margin: 20px;
   display: flex;
   align-items: center;
   background-color: rgba(141, 44, 74, 0.1);
   border-radius: 25px;
-  padding: 10px;
+  padding: 0 10px;
   transform: none;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -20,6 +21,10 @@
   padding: 10px;
   font-size: 16px;
   outline: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  resize: none;
+  max-height: 120px; 
 }
 
 .prompt-input::placeholder {
@@ -39,4 +44,14 @@
 .mic-button:hover,
 .send-button:hover {
   color: #DE478F;
+  transform: scale(1.1);
+}
+
+.mic-button.listening {
+  color: #DE478F;
+}
+
+.mic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

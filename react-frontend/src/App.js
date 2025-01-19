@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
 import ProgressBar from './components/ProgressBar';
 import PromptBar from './components/PromptBar';
 import UserProfile from './components/UserProfile';
@@ -13,6 +15,36 @@ function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
 
+  const { loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+
+  // Function to send user data to backend
+  useEffect(() => {
+    const updateUserInBackend = async () => {
+      if (isAuthenticated && user) {
+        try {
+          // Send user data to the backend
+          await axios.post(
+            process.env.REACT_APP_AUTH0_API_IDENTIFIER + "/public/add_user",
+            {
+              id: user.sub,       // Auth0 user ID
+              name: user.name,    // User's name
+              email: user.email,  // User's email
+              picture: user.picture, // User's profile picture
+            }
+          );
+
+          console.log("User data successfully updated in backend.");
+        } catch (error) {
+          console.error("Error updating user in backend:", error);
+        }
+      }
+    };
+
+    updateUserInBackend();
+  }, [isAuthenticated, user]); // Runs when isAuthenticated or user changes
+  
+
+  // Function to simulate streaming responses
   const simulateStreamingResponse = async (prompt) => {
     const response = `This is a sample response to: ${prompt}`;
     setIsStreaming(true);
@@ -21,7 +53,6 @@ function App() {
     for (let i = 0; i < response.length; i++) {
       streamedText += response[i];
       setCurrentStreamingText(streamedText);
-      // Simulate random typing speed between 20-50ms
       await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 20));
     }
     
@@ -30,14 +61,28 @@ function App() {
     setCurrentStreamingText('');
   };
 
+  // Handle prompt submission
   const handlePromptSubmit = (prompt) => {
     simulateStreamingResponse(prompt);
   };
 
+
+  if (!isAuthenticated) {
+    return (
+      <div className="LoginPopup">
+        <div className="LoginModal">
+          <h2>Welcome to the App</h2>
+          <p>Please log in to continue.</p>
+          <button onClick={() => loginWithRedirect()}>Log In</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <ProgressBar startTime={startTime} endTime={endTime} />
-      <UserProfile user={{ name: 'User' }} searches={searches} />
+      <UserProfile user={user} searches={searches} logout={logout}/>
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

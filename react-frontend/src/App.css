@@ -1,25 +1,71 @@
 body {
-    margin: 0;
-    padding: 0;
-  }
-  
-  .App {
-    width: 700px;
-    height: 500px;
-    background-color: #FCF0D5;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    color: #FCF0D5;
-  }
-  
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  input, button {
-    font-family: inherit;
-    text-align: center;
-  }
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  width: 700px;
+  height: 500px;
+  background-color: #FCF0D5;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  color: #FCF0D5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+input, button {
+  font-family: inherit;
+  text-align: center;
+}
+
+/* Login Popup Styles */
+.LoginPopup {
+  width: 700px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background-color: #FCF0D5;
+}
+
+.LoginModal {
+  background-color: rgba(141, 44, 74, 0.1);
+  color: #8D2C4A;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.LoginModal h2 {
+  margin-bottom: 10px;
+  color: #8D2C4A;
+}
+
+.LoginModal p {
+  margin-bottom: 20px;
+  color: #8D2C4A;
+}
+
+.LoginModal button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #FCF0D5;
+  background-color: #8D2C4A;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.LoginModal button:hover {
+  background-color: #FCF0D5;
+  color: #8D2C4A;
+}
+
