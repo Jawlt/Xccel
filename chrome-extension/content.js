@@ -18,6 +18,26 @@ function formatTime(seconds) {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
+// Function to control video playback
+function controlVideo(action, value) {
+  const video = document.querySelector('video');
+  if (!video) return;
+
+  switch (action) {
+    case 'seek':
+      video.currentTime += value;
+      break;
+    case 'play':
+      video.play();
+      break;
+    case 'pause':
+      video.pause();
+      break;
+    default:
+      break;
+  }
+}
+
 // Continuously monitor video and send updates to background script
 function monitorVideo() {
   setInterval(() => {
@@ -34,10 +54,12 @@ function monitorVideo() {
 // Start monitoring when script loads
 monitorVideo();
 
-// Also keep the message listener for direct requests
+// Listen for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getVideoTime") {
     sendResponse(getVideoTime());
+  } else if (request.action === "videoControl") {
+    controlVideo(request.control, request.value);
   }
   return true;
 });

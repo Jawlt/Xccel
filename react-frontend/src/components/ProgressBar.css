@@ -10,11 +10,36 @@
   align-items: center;
 }
 
+.controls-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
 .time-display {
   color: #8D2C4A;
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 8px;
+}
+
+.control-button {
+  background: none;
+  border: none;
+  color: #8D2C4A;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.control-button:hover:not(:disabled) {
+  color: #DE478F;
+}
+
+.control-button:disabled {
+  color: rgba(141, 44, 74, 0.3);
+  cursor: not-allowed;
 }
 
 .url-container {
@@ -34,7 +59,6 @@
   font-size: 14px;
   position: relative;
   z-index: 2;
-  overflow: ellipse;
 }
 
 .progress-bar {

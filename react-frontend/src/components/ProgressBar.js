@@ -1,5 +1,7 @@
 /* global chrome */
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBackward, faForward, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import './ProgressBar.css';
 
 const ProgressBar = () => {
@@ -7,18 +9,42 @@ const ProgressBar = () => {
   const [progress, setProgress] = useState(0);
   const [videoUrl, setVideoUrl] = useState('');
   const [hasVideo, setHasVideo] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const controlVideo = (action, value = null) => {
+    const isExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
+    
+    if (isExtension) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "videoControl",
+          control: action,
+          value: value
+        });
+      });
+    }
+  };
+
+  const handleSeekBackward = () => {
+    controlVideo('seek', -10);
+  };
+
+  const handleSeekForward = () => {
+    controlVideo('seek', 10);
+  };
+
+  const handlePlayPause = () => {
+    controlVideo(isPlaying ? 'pause' : 'play');
+    setIsPlaying(!isPlaying);
+  };
 
   useEffect(() => {
-    // Check if running in development or as extension
     const isExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
-
-    // Mock data for development
     let mockProgress = 0;
     let mockTime = 0;
 
     const updateProgress = () => {
       if (isExtension) {
-        // Real extension code
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
           const url = tabs[0].url;
           if (url.includes('youtube.com/watch')) {
@@ -36,7 +62,6 @@ const ProgressBar = () => {
           }
         });
       } else {
-        // Development mock
         mockProgress = (mockProgress + 1) % 100;
         mockTime += 1;
         const minutes = Math.floor(mockTime / 60);
@@ -56,7 +81,30 @@ const ProgressBar = () => {
     <div className="progress-container">
       {hasVideo ? (
         <>
-          <div className="time-display">{currentTime}</div>
+          <div className="controls-container">
+            <button 
+              className="control-button" 
+              onClick={handleSeekBackward}
+              disabled={!hasVideo}
+            >
+              <FontAwesomeIcon icon={faBackward} />
+            </button>
+            <button 
+              className="control-button" 
+              onClick={handlePlayPause}
+              disabled={!hasVideo}
+            >
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+            </button>
+            <button 
+              className="control-button" 
+              onClick={handleSeekForward}
+              disabled={!hasVideo}
+            >
+              <FontAwesomeIcon icon={faForward} />
+            </button>
+            <div className="time-display">{currentTime}</div>
+          </div>
           <div className="url-container">
             <span className="url-text">URL: {videoUrl}</span>
             <div className="progress-bar" style={{ width: `${progress}%` }}></div>
