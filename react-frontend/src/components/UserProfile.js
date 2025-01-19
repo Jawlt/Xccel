@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Menu from './Menu';
 import './UserProfile.css';
 
-const UserProfile = ({ user, searches }) => {
+const UserProfile = ({ user, searches, logout }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = () => {
@@ -12,15 +12,15 @@ const UserProfile = ({ user, searches }) => {
   return (
     <div className="user-profile">
       <div className="profile-image" onClick={toggleMenu}>
-        {user?.image ? (
-          <img src={user.image} alt="Profile" />
+        {user?.picture ? (
+          <img src={user.picture} alt="Profile" className="profile-picture" />
         ) : (
           <div className="profile-placeholder">R</div>
         )}
       </div>
       {showMenu && (
         <div className="menu-wrapper">
-          <Menu searches={searches} onClose={() => setShowMenu(false)} />
+          <Menu searches={searches} logout={logout} onClose={() => setShowMenu(false)} />
         </div>
       )}
     </div>
