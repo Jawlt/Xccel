@@ -9,11 +9,16 @@ import './App.css';
 
 function App() {
   const [results, setResults] = useState([]);
-  const [startTime] = useState(Date.now());
-  const [endTime] = useState(Date.now() + 60000); // 60 seconds duration
-  const [searches] = useState(['3:21', '3:21', '3:21']); // Example searches
+  const [searches] = useState(['3:21', '3:21', '3:21']);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
+  const [timestamps, setTimestamps] = useState([]);
+
+  const extractTimestamp = (text) => {
+    const timestampRegex = /\b(\d{1,2}):(\d{2})\b/;
+    const match = text.match(timestampRegex);
+    return match ? match[0] : null;
+  };
 
   const {
     loginWithPopup,
@@ -52,6 +57,11 @@ function App() {
 
   // Function to simulate streaming responses
   const simulateStreamingResponse = async (prompt) => {
+    const timestamp = extractTimestamp(prompt);
+    if (timestamp) {
+      setTimestamps(prev => [...prev, timestamp]);
+    }
+
     const response = `This is a sample response to: ${prompt}`;
     setIsStreaming(true);
     let streamedText = '';
@@ -100,8 +110,8 @@ function App() {
 
   return (
     <div className="App">
-      <ProgressBar startTime={startTime} endTime={endTime} />
-      <UserProfile user={user} searches={searches} logout={logout} />
+      <ProgressBar timestamps={timestamps} />
+      <UserProfile user={user} searches={searches} logout={logout}/>
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

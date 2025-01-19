@@ -1,26 +1,105 @@
+/* global chrome */
 import React, { useState, useEffect } from 'react';
 import './ProgressBar.css';
 
-const ProgressBar = ({ startTime, endTime }) => {
+const ProgressBar = ({ timestamps = [] }) => {
+  const [currentTime, setCurrentTime] = useState('0:00');
   const [progress, setProgress] = useState(0);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [hasVideo, setHasVideo] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(0);
 
   useEffect(() => {
+    const isExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
+    let mockProgress = 0;
+    let mockTime = 0;
+
     const updateProgress = () => {
-      const now = Date.now();
-      const newProgress = Math.min(((now - startTime) / (endTime - startTime)) * 100, 100);
-      setProgress(newProgress);
+      if (isExtension) {
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          const url = tabs[0].url;
+          if (url.includes('youtube.com/watch')) {
+            setHasVideo(true);
+            setVideoUrl(url);
+            chrome.tabs.sendMessage(tabs[0].id, {action: "getVideoTime"}, response => {
+              if (response) {
+                setCurrentTime(response.currentTime);
+                setProgress(response.progress);
+                setVideoDuration(response.duration);
+              }
+            });
+          } else {
+            setHasVideo(false);
+            setVideoUrl('');
+          }
+        });
+      } else {
+        mockProgress = (mockProgress + 1) % 100;
+        mockTime += 1;
+        const minutes = Math.floor(mockTime / 60);
+        const seconds = mockTime % 60;
+        setCurrentTime(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+        setProgress(mockProgress);
+        setHasVideo(true);
+        setVideoUrl('https://www.youtube.com/watch?v=B8Ihv3xsWYs');
+        setVideoDuration(600); // Mock 10 minutes duration
+      }
     };
 
-    updateProgress();
-    const interval = setInterval(updateProgress, 100);
+    const interval = setInterval(updateProgress, 1000);
     return () => clearInterval(interval);
-  }, [startTime, endTime]);
+  }, []);
+
+  const handleTimestampClick = (timestamp) => {
+    const [minutes, seconds] = timestamp.split(':').map(Number);
+    const timeInSeconds = minutes * 60 + seconds;
+    
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "seekTo",
+          time: timeInSeconds
+        });
+      });
+    }
+  };
 
   return (
     <div className="progress-container">
-      <div className="url-container">
-        <span className="url-text">URL:https://www.youtube.com/watch?v=B8Ihv3xsWYs</span>
-        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+      <div className="progress-wrapper">
+        <div className="url-container">
+          <span className="url-text">
+            {hasVideo ? `URL: ${videoUrl}` : 'No video detected'}
+          </span>
+          <div className="progress-bar" style={{ width: `${progress}%` }} />
+          {timestamps.map((timestamp, index) => {
+            const [minutes, seconds] = timestamp.split(':').map(Number);
+            const timeInSeconds = minutes * 60 + seconds;
+            const position = (timeInSeconds / videoDuration) * 100;
+            
+            return (
+              <div
+                key={index}
+                className="timestamp-marker"
+                style={{ left: `${position}%` }}
+                onClick={() => handleTimestampClick(timestamp)}
+              >
+                <div className="timestamp-tooltip">{timestamp}</div>
+              </div>
+            );
+          })}
+        </div>
+        {hasVideo && (
+          <div 
+            className="time-display" 
+            style={{ 
+              left: `${progress}%`,
+              opacity: hasVideo ? 1 : 0
+            }}
+          >
+            {currentTime}
+          </div>
+        )}
       </div>
     </div>
   );

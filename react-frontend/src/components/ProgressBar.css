@@ -1,10 +1,16 @@
 .progress-container {
   width: 660px;
-  padding-top: 20px;
+  padding-top: 40px;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+}
+
+.progress-wrapper {
+  position: relative;
+  width: 90%;
+  margin-left: 20px;
 }
 
 .url-container {
@@ -13,9 +19,7 @@
   padding: 15px 20px;
   position: relative;
   overflow: hidden;
-  width: 90%;
-  margin: 0;
-  margin-left: 20px;
+  width: 100%;
 }
 
 .url-text {
@@ -24,6 +28,7 @@
   font-size: 14px;
   position: relative;
   z-index: 2;
+  overflow: ellipse;
 }
 
 .progress-bar {
@@ -34,4 +39,55 @@
   background-color: rgba(222, 71, 143, 0.2);
   transition: width 0.1s linear;
   z-index: 1;
+  border-radius: 25px;
+}
+
+.time-display {
+  position: absolute;
+  top: -30px;
+  transform: translateX(-50%);
+  color: #8D2C4A;
+  font-size: 14px;
+  font-weight: 600;
+  transition: left 0.1s linear;
+  z-index: 1001;
+  white-space: nowrap;
+  pointer-events: none;
+  background-color: rgba(141, 44, 74, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.timestamp-marker {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background-color: #FFD700;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.2s ease;
+}
+
+.timestamp-marker:hover {
+  transform: scaleX(2);
+}
+
+.timestamp-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #FFD700;
+  color: #8D2C4A;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.timestamp-marker:hover .timestamp-tooltip {
+  opacity: 1;
 }
