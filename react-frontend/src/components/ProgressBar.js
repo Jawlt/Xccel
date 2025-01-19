@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import './ProgressBar.css';
 
-const ProgressBar = () => {
+const ProgressBar = ({ timestamps = [] }) => {
   const [currentTime, setCurrentTime] = useState('0:00');
   const [progress, setProgress] = useState(0);
   const [videoUrl, setVideoUrl] = useState('');
   const [hasVideo, setHasVideo] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(0);
 
   useEffect(() => {
     const isExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
@@ -21,9 +22,10 @@ const ProgressBar = () => {
             setHasVideo(true);
             setVideoUrl(url);
             chrome.tabs.sendMessage(tabs[0].id, {action: "getVideoTime"}, response => {
-              if (response && response.currentTime) {
+              if (response) {
                 setCurrentTime(response.currentTime);
                 setProgress(response.progress);
+                setVideoDuration(response.duration);
               }
             });
           } else {
@@ -40,12 +42,27 @@ const ProgressBar = () => {
         setProgress(mockProgress);
         setHasVideo(true);
         setVideoUrl('https://www.youtube.com/watch?v=B8Ihv3xsWYs');
+        setVideoDuration(600); // Mock 10 minutes duration
       }
     };
 
     const interval = setInterval(updateProgress, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleTimestampClick = (timestamp) => {
+    const [minutes, seconds] = timestamp.split(':').map(Number);
+    const timeInSeconds = minutes * 60 + seconds;
+    
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "seekTo",
+          time: timeInSeconds
+        });
+      });
+    }
+  };
 
   return (
     <div className="progress-container">
@@ -55,6 +72,22 @@ const ProgressBar = () => {
             {hasVideo ? `URL: ${videoUrl}` : 'No video detected'}
           </span>
           <div className="progress-bar" style={{ width: `${progress}%` }} />
+          {timestamps.map((timestamp, index) => {
+            const [minutes, seconds] = timestamp.split(':').map(Number);
+            const timeInSeconds = minutes * 60 + seconds;
+            const position = (timeInSeconds / videoDuration) * 100;
+            
+            return (
+              <div
+                key={index}
+                className="timestamp-marker"
+                style={{ left: `${position}%` }}
+                onClick={() => handleTimestampClick(timestamp)}
+              >
+                <div className="timestamp-tooltip">{timestamp}</div>
+              </div>
+            );
+          })}
         </div>
         {hasVideo && (
           <div 

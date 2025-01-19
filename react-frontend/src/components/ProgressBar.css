@@ -1,6 +1,6 @@
 .progress-container {
   width: 660px;
-  padding-top: 40px; /* Increased from 20px to 40px */
+  padding-top: 40px;
   position: fixed;
   top: 0;
   left: 0;
@@ -44,7 +44,7 @@
 
 .time-display {
   position: absolute;
-  top: -30px; /* Adjusted from -25px to -30px for more space */
+  top: -30px;
   transform: translateX(-50%);
   color: #8D2C4A;
   font-size: 14px;
@@ -56,4 +56,38 @@
   background-color: rgba(141, 44, 74, 0.1);
   padding: 4px 8px;
   border-radius: 12px;
+}
+
+.timestamp-marker {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background-color: #FFD700;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.2s ease;
+}
+
+.timestamp-marker:hover {
+  transform: scaleX(2);
+}
+
+.timestamp-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #FFD700;
+  color: #8D2C4A;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.timestamp-marker:hover .timestamp-tooltip {
+  opacity: 1;
 }

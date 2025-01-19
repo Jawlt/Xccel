@@ -5,8 +5,9 @@ function getVideoTime() {
   const video = document.querySelector('video');
   if (video) {
     const currentTime = formatTime(video.currentTime);
-    const progress = (video.currentTime / video.duration) * 100;
-    return { currentTime, progress };
+    const duration = video.duration;
+    const progress = (video.currentTime / duration) * 100;
+    return { currentTime, progress, duration };
   }
   return null;
 }
@@ -18,23 +19,17 @@ function formatTime(seconds) {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-// Function to control video playback
-function controlVideo(action, value) {
-  const video = document.querySelector('video');
-  if (!video) return;
+// Convert timestamp string to seconds
+function timestampToSeconds(timestamp) {
+  const [minutes, seconds] = timestamp.split(':').map(Number);
+  return minutes * 60 + seconds;
+}
 
-  switch (action) {
-    case 'seek':
-      video.currentTime += value;
-      break;
-    case 'play':
-      video.play();
-      break;
-    case 'pause':
-      video.pause();
-      break;
-    default:
-      break;
+// Seek video to specific time
+function seekToTime(seconds) {
+  const video = document.querySelector('video');
+  if (video) {
+    video.currentTime = seconds;
   }
 }
 
@@ -54,12 +49,13 @@ function monitorVideo() {
 // Start monitoring when script loads
 monitorVideo();
 
-// Listen for messages from the popup
+// Listen for messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getVideoTime") {
     sendResponse(getVideoTime());
-  } else if (request.action === "videoControl") {
-    controlVideo(request.control, request.value);
+  } else if (request.action === "seekTo") {
+    seekToTime(request.time);
+    sendResponse({ success: true });
   }
   return true;
 });

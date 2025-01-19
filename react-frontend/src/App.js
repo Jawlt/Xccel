@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ProgressBar from './components/ProgressBar';
 import PromptBar from './components/PromptBar';
 import UserProfile from './components/UserProfile';
@@ -7,13 +7,23 @@ import './App.css';
 
 function App() {
   const [results, setResults] = useState([]);
-  const [startTime] = useState(Date.now());
-  const [endTime] = useState(Date.now() + 60000); // 60 seconds duration
-  const [searches] = useState(['3:21', '3:21', '3:21']); // Example searches
+  const [searches] = useState(['3:21', '3:21', '3:21']);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
+  const [timestamps, setTimestamps] = useState([]);
+
+  const extractTimestamp = (text) => {
+    const timestampRegex = /\b(\d{1,2}):(\d{2})\b/;
+    const match = text.match(timestampRegex);
+    return match ? match[0] : null;
+  };
 
   const simulateStreamingResponse = async (prompt) => {
+    const timestamp = extractTimestamp(prompt);
+    if (timestamp) {
+      setTimestamps(prev => [...prev, timestamp]);
+    }
+
     const response = `This is a sample response to: ${prompt}`;
     setIsStreaming(true);
     let streamedText = '';
@@ -21,7 +31,6 @@ function App() {
     for (let i = 0; i < response.length; i++) {
       streamedText += response[i];
       setCurrentStreamingText(streamedText);
-      // Simulate random typing speed between 20-50ms
       await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 20));
     }
     
@@ -36,7 +45,7 @@ function App() {
 
   return (
     <div className="App">
-      <ProgressBar startTime={startTime} endTime={endTime} />
+      <ProgressBar timestamps={timestamps} />
       <UserProfile user={{ name: 'User' }} searches={searches} />
       <ResultsArea 
         results={results} 
