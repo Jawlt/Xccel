@@ -15,7 +15,14 @@ function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
 
-  const { loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+  const {
+    loginWithPopup,
+    logout,
+    isAuthenticated,
+    user,
+    getAccessTokenSilently,
+    isLoading,
+  } = useAuth0();
 
   // Function to send user data to backend
   useEffect(() => {
@@ -42,7 +49,6 @@ function App() {
 
     updateUserInBackend();
   }, [isAuthenticated, user]); // Runs when isAuthenticated or user changes
-  
 
   // Function to simulate streaming responses
   const simulateStreamingResponse = async (prompt) => {
@@ -66,6 +72,19 @@ function App() {
     simulateStreamingResponse(prompt);
   };
 
+  // Handle popup login
+  const handleLogin = async () => {
+    try {
+      await loginWithPopup();
+      console.log("Logged in user:", user);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return (
@@ -73,7 +92,7 @@ function App() {
         <div className="LoginModal">
           <h2>Welcome to the App</h2>
           <p>Please log in to continue.</p>
-          <button onClick={() => loginWithRedirect()}>Log In</button>
+          <button onClick={handleLogin}>Log In</button>
         </div>
       </div>
     );
@@ -82,7 +101,7 @@ function App() {
   return (
     <div className="App">
       <ProgressBar startTime={startTime} endTime={endTime} />
-      <UserProfile user={user} searches={searches} logout={logout}/>
+      <UserProfile user={user} searches={searches} logout={logout} />
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

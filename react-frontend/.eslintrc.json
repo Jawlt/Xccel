@@ -1,0 +1,12 @@
+{
+    "env": {
+      "browser": true,
+      "webextensions": true
+    },
+    "globals": {
+      "chrome": "readonly"
+    },
+    "extends": ["react-app"],
+    "rules": {}
+  }
+  
