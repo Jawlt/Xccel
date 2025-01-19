@@ -1,5 +1,6 @@
 import React from 'react';
 import './ResultsArea.css';
+import gptLogo from '../assets/gpt-logo.png';
 
 const ResultsArea = ({ results, isStreaming, currentStreamingText, user }) => {
   const formatText = (text) => {
@@ -9,12 +10,16 @@ const ResultsArea = ({ results, isStreaming, currentStreamingText, user }) => {
   return (
     <div className="results-area">
       {results.map((result, index) => (
-        <div key={index} className="result-item assistant">
+        <div key={index} className={`result-item ${result.type}`}>
           <div className="avatar">
-            {user?.picture ? (
-              <img src={user.picture} alt="User" className="avatar-image" />
+            {result.type === 'user' ? (
+              user?.picture ? (
+                <img src={user.picture} alt="User" className="avatar-image" />
+              ) : (
+                'U'
+              )
             ) : (
-              'A'
+              <img src={gptLogo} alt="GPT" className="gpt-avatar" />
             )}
           </div>
           <div className="message-content" 
@@ -23,18 +28,14 @@ const ResultsArea = ({ results, isStreaming, currentStreamingText, user }) => {
         </div>
       ))}
       {isStreaming && (
-        <div className="result-item assistant streaming">
+        <div className="result-item gpt streaming">
           <div className="avatar">
-            {user?.picture ? (
-              <img src={user.picture} alt="User" className="avatar-image" />
-            ) : (
-              'A'
-            )}
+            <img src={gptLogo} alt="GPT" className="gpt-avatar" />
           </div>
-          <div className="message-content"
-            dangerouslySetInnerHTML={{ __html: formatText(currentStreamingText) }}>
+          <div className="message-content">
+            {currentStreamingText}
+            <span className="cursor"></span>
           </div>
-          <span className="cursor"></span>
         </div>
       )}
     </div>

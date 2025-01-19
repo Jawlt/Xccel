@@ -21,7 +21,14 @@
   display: flex;
   align-items: flex-start;
   animation: fadeIn 0.3s ease-out;
+}
+
+.result-item.user {
   background-color: #8D2C4A;
+}
+
+.result-item.gpt {
+  background-color: #FCF0D5;
 }
 
 .avatar {
@@ -34,7 +41,6 @@
   justify-content: center;
   flex-shrink: 0;
   font-weight: bold;
-  background-color: #DE478F;
   overflow: hidden;
 }
 
@@ -44,16 +50,24 @@
   object-fit: cover;
 }
 
+.gpt-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .message-content {
   flex: 1;
   padding-top: 4px;
   position: relative;
+}
+
+.user .message-content {
   color: #FCF0D5;
 }
 
-.search-label {
-  color: #FCF0D5;
-  font-weight: bold;
+.gpt .message-content {
+  color: #8D2C4A;
 }
 
 .cursor {

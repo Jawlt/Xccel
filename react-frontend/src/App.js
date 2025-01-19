@@ -29,22 +29,19 @@ function App() {
     isLoading,
   } = useAuth0();
 
-  // Function to send user data to backend
   useEffect(() => {
     const updateUserInBackend = async () => {
       if (isAuthenticated && user) {
         try {
-          // Send user data to the backend
           await axios.post(
             process.env.REACT_APP_AUTH0_API_IDENTIFIER + "/public/add_user",
             {
-              id: user.sub,       // Auth0 user ID
-              name: user.name,    // User's name
-              email: user.email,  // User's email
-              picture: user.picture, // User's profile picture
+              id: user.sub,
+              name: user.name,
+              email: user.email,
+              picture: user.picture,
             }
           );
-
           console.log("User data successfully updated in backend.");
         } catch (error) {
           console.error("Error updating user in backend:", error);
@@ -53,36 +50,43 @@ function App() {
     };
 
     updateUserInBackend();
-  }, [isAuthenticated, user]); // Runs when isAuthenticated or user changes
+  }, [isAuthenticated, user]);
 
-  // Function to simulate streaming responses
   const simulateStreamingResponse = async (user_prompt) => {
     const timestamp = extractTimestamp(user_prompt);
     if (timestamp) {
       setTimestamps(prev => [...prev, timestamp]);
     }
 
-    const response = `**Search: ${user_prompt}**`;
+    // Add user message
+    setResults(prev => [...prev, { 
+      text: `**Search: ${user_prompt}**`,
+      type: 'user'
+    }]);
+
+    // Simulate GPT response
     setIsStreaming(true);
+    const gptResponse = "This is a dummy GPT response that will be replaced with actual GPT responses later. For now, I'm just demonstrating the different message types and styling.";
     let streamedText = '';
     
-    for (let i = 0; i < response.length; i++) {
-      streamedText += response[i];
+    for (let i = 0; i < gptResponse.length; i++) {
+      streamedText += gptResponse[i];
       setCurrentStreamingText(streamedText);
       await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 20));
     }
     
     setIsStreaming(false);
-    setResults([...results, { text: streamedText, completed: true }]);
+    setResults(prev => [...prev, { 
+      text: gptResponse,
+      type: 'gpt'
+    }]);
     setCurrentStreamingText('');
   };
 
-  // Handle prompt submission
   const handlePromptSubmit = (user_prompt) => {
     simulateStreamingResponse(user_prompt);
   };
 
-  // Handle popup login
   const handleLogin = async () => {
     try {
       await loginWithPopup();
