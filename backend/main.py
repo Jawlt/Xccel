@@ -9,13 +9,13 @@ app = FastAPI()
 app.include_router(public.router, prefix="/public", tags=["Public"])
 app.include_router(private.router, prefix="/private", tags=["Private"])
 
-# Add CORS middleware
+# Add CORS middleware with expanded configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allow requests from React app
+    allow_origins=["http://localhost:3000", "chrome-extension://*"],  # Allow React app and Chrome extension
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")

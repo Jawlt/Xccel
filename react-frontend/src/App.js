@@ -13,6 +13,7 @@ function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
   const [timestamps, setTimestamps] = useState([]);
+  const [currentVideoId, setCurrentVideoId] = useState(null);
 
   const extractTimestamp = (text) => {
     const timestampRegex = /\b(\d{1,2}):(\d{2})\b/;
@@ -52,6 +53,32 @@ function App() {
     updateUserInBackend();
   }, [isAuthenticated, user]);
 
+  // Listen for video updates from content script
+  useEffect(() => {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === "videoUpdate" && message.data.videoId) {
+          setCurrentVideoId(message.data.videoId);
+        }
+      });
+    }
+  }, []);
+
+  const fetchTranscript = async (videoId) => {
+    try {
+      console.log('Fetching transcript for video:', videoId); // Debug log
+      const response = await axios.get(
+        `http://localhost:8000/public/transcript/${videoId}`  // Use explicit localhost URL
+      );
+      console.log('Transcript response:', response.data); // Debug log
+      return response.data.transcript;
+    } catch (error) {
+      console.error("Error fetching transcript:", error);
+      return `Error fetching transcript: ${error.message}. Please try again.`;
+    }
+  };
+  
+
   const simulateStreamingResponse = async (user_prompt) => {
     const timestamp = extractTimestamp(user_prompt);
     if (timestamp) {
@@ -64,20 +91,25 @@ function App() {
       type: 'user'
     }]);
 
-    // Simulate GPT response
+    // Get transcript if video ID is available
     setIsStreaming(true);
-    const gptResponse = "This is a dummy GPT response that will be replaced with actual GPT responses later. For now, I'm just demonstrating the different message types and styling.";
+    let response;
+    if (currentVideoId) {
+      response = await fetchTranscript(currentVideoId);
+    } else {
+      response = "No YouTube video detected. Please make sure you're on a YouTube video page.";
+    }
+
     let streamedText = '';
-    
-    for (let i = 0; i < gptResponse.length; i++) {
-      streamedText += gptResponse[i];
+    for (let i = 0; i < response.length; i++) {
+      streamedText += response[i];
       setCurrentStreamingText(streamedText);
       await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 20));
     }
     
     setIsStreaming(false);
     setResults(prev => [...prev, { 
-      text: gptResponse,
+      text: response,
       type: 'gpt'
     }]);
     setCurrentStreamingText('');
