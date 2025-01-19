@@ -1,8 +1,7 @@
 .prompt-bar {
   position: relative;
   width: 94.2%;
-  height: 80px;
-  top: 50px;
+  top: 70px; /* Increased from 50px to 70px height 80px*/
   margin: 20px;
   display: flex;
   align-items: center;

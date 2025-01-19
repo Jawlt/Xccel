@@ -8,9 +8,9 @@
   border-radius: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 94.2%;
-  max-height: 60%;
+  max-height: 55%; /* Reduced from 60% to 55% */
   position: relative;
-  top: 70px;
+  top: 90px; /* Increased from 70px to 90px */
 }
 
 .result-item {
