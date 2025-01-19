@@ -28,6 +28,7 @@
   font-size: 14px;
   position: relative;
   z-index: 2;
+  overflow: ellipse;
 }
 
 .progress-bar {
