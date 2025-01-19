@@ -1,15 +1,28 @@
 console.log("Video tracking content script loaded!");
 
+let lastProcessedVideoId = null;
+
 window.requestMicrophoneAccess = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       console.log('Microphone access granted:', stream);
-      return true; // Access granted
+      return true;
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      return false; // Access denied
+      return false;
     }
   };
+
+// Function to extract video ID from YouTube URL
+function getYoutubeVideoId(url) {
+  const urlObj = new URL(url);
+  if (urlObj.hostname.includes('youtube.com')) {
+    return urlObj.searchParams.get('v');
+  } else if (urlObj.hostname.includes('youtu.be')) {
+    return urlObj.pathname.slice(1);
+  }
+  return null;
+}
 
 // Function to get current video time and progress
 function getVideoTime() {
@@ -18,7 +31,8 @@ function getVideoTime() {
     const currentTime = formatTime(video.currentTime);
     const duration = video.duration;
     const progress = (video.currentTime / duration) * 100;
-    return { currentTime, progress, duration };
+    const videoId = getYoutubeVideoId(window.location.href);
+    return { currentTime, progress, duration, videoId };
   }
   return null;
 }
@@ -42,6 +56,41 @@ function seekToTime(seconds) {
   if (video) {
     video.currentTime = seconds;
   }
+}
+
+// Function to process new video
+async function processNewVideo(videoId) {
+  if (videoId && videoId !== lastProcessedVideoId) {
+    lastProcessedVideoId = videoId;
+    try {
+      const response = await fetch(`http://localhost:8000/public/transcript/${videoId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log('Transcript processed for video:', videoId);
+    } catch (error) {
+      console.error('Error processing transcript:', error);
+    }
+  }
+}
+
+// Monitor URL changes for YouTube navigation
+let lastUrl = window.location.href;
+new MutationObserver(() => {
+  const currentUrl = window.location.href;
+  if (currentUrl !== lastUrl) {
+    lastUrl = currentUrl;
+    const videoId = getYoutubeVideoId(currentUrl);
+    if (videoId) {
+      processNewVideo(videoId);
+    }
+  }
+}).observe(document, { subtree: true, childList: true });
+
+// Initial check for video
+const initialVideoId = getYoutubeVideoId(window.location.href);
+if (initialVideoId) {
+  processNewVideo(initialVideoId);
 }
 
 // Continuously monitor video and send updates to background script
