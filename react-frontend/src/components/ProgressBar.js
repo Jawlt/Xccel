@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ProgressBar.css';
 
 const ProgressBar = ({ timestamps = [] }) => {
+  console.log("ProgressBar received timestamps:", timestamps);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [progress, setProgress] = useState(0);
   const [videoUrl, setVideoUrl] = useState('');
@@ -24,6 +25,7 @@ const ProgressBar = ({ timestamps = [] }) => {
                 setCurrentTime(response.currentTime);
                 setProgress(response.progress);
                 setVideoDuration(response.duration);
+                console.log("Video duration:", response.duration);
               }
             });
           } else {
@@ -33,10 +35,9 @@ const ProgressBar = ({ timestamps = [] }) => {
         });
       }, 1000);
     } else {
-      // Mock data for development
       setHasVideo(true);
       setVideoUrl('https://www.youtube.com/watch?v=example');
-      setVideoDuration(600); // 10 minutes
+      setVideoDuration(600);
       
       interval = setInterval(() => {
         setProgress(prev => (prev + 1) % 100);
@@ -62,6 +63,7 @@ const ProgressBar = ({ timestamps = [] }) => {
 
   const handleTimestampClick = (timestamp) => {
     const seconds = timestampToSeconds(timestamp);
+    console.log("Seeking to timestamp:", timestamp, "seconds:", seconds);
     
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -84,6 +86,7 @@ const ProgressBar = ({ timestamps = [] }) => {
           {timestamps.map((timestamp, index) => {
             const seconds = timestampToSeconds(timestamp);
             const position = (seconds / videoDuration) * 100;
+            console.log("Rendering timestamp:", timestamp, "at position:", position);
             
             return (
               <div

@@ -1,6 +1,7 @@
 console.log("Video tracking content script loaded!");
 
 let lastProcessedVideoId = null;
+let isProcessingTranscript = false;
 
 window.requestMicrophoneAccess = async () => {
     try {
@@ -60,17 +61,22 @@ function seekToTime(seconds) {
 
 // Function to process new video
 async function processNewVideo(videoId) {
-  if (videoId && videoId !== lastProcessedVideoId) {
-    lastProcessedVideoId = videoId;
-    try {
-      const response = await fetch(`http://localhost:8000/public/transcript/${videoId}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log('Transcript processed for video:', videoId);
-    } catch (error) {
-      console.error('Error processing transcript:', error);
+  if (!videoId || videoId === lastProcessedVideoId || isProcessingTranscript) {
+    return;
+  }
+
+  try {
+    isProcessingTranscript = true;
+    const response = await fetch(`http://localhost:8000/public/transcript/${videoId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    console.log('Transcript processed for video:', videoId);
+    lastProcessedVideoId = videoId;
+  } catch (error) {
+    console.error('Error processing transcript:', error);
+  } finally {
+    isProcessingTranscript = false;
   }
 }
 

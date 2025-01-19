@@ -16,24 +16,24 @@ function App() {
   const [isProcessingTranscript, setIsProcessingTranscript] = useState(false);
 
   const extractTimestamps = (text) => {
+    console.log("Extracting timestamps from:", text);
     const timestamps = new Set();
     
-    // Match HH:MM:SS or MM:SS format
     const standardRegex = /\b(\d{1,2}:)?(\d{1,2}):(\d{2})\b/g;
     const standardMatches = text.match(standardRegex) || [];
+    console.log("Standard matches:", standardMatches);
     standardMatches.forEach(match => timestamps.add(match));
 
-    // Match [H:MM:SS.XXXXXX] format
     const bracketRegex = /\[(\d{1,2}):(\d{2}):(\d{2})\.?\d*\]/g;
-    const bracketMatches = text.matchAll(bracketRegex);
+    const bracketMatches = Array.from(text.matchAll(bracketRegex));
+    console.log("Bracket matches:", bracketMatches);
+    
     for (const match of bracketMatches) {
       const [_, hours, minutes, seconds] = match;
-      // Ensure proper formatting with leading zeros for single-digit values
       const formattedHours = hours.padStart(2, '0');
       const formattedMinutes = minutes.padStart(2, '0');
       const formattedSeconds = seconds.padStart(2, '0');
       
-      // If hours is '00', omit it from the timestamp
       const formattedTime = formattedHours === '00' ? 
         `${parseInt(formattedMinutes)}:${formattedSeconds}` : 
         `${parseInt(formattedHours)}:${formattedMinutes}:${formattedSeconds}`;
@@ -41,10 +41,11 @@ function App() {
       timestamps.add(formattedTime);
     }
 
-    return Array.from(timestamps);
+    const result = Array.from(timestamps);
+    console.log("Extracted timestamps:", result);
+    return result;
   };
 
-  // Rest of the component remains the same...
   const {
     loginWithPopup,
     logout,
@@ -78,30 +79,47 @@ function App() {
   }, [isAuthenticated, user]);
 
   useEffect(() => {
+    let messageListener;
+    
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-      chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+      messageListener = (message, sender, sendResponse) => {
         if (message.action === "videoUpdate" && message.data.videoId) {
-          const videoId = message.data.videoId;
-          setCurrentVideoId(videoId);
-          
-          if (videoId) {
-            setIsProcessingTranscript(true);
-            try {
-              const response = await axios.get(`http://localhost:8000/public/transcript/${videoId}`);
-              if (response.data.status === "completed") {
-                console.log("Transcript processing completed");
-              }
-            } catch (error) {
-              console.error("Error processing transcript:", error);
-            } finally {
-              setIsProcessingTranscript(false);
-            }
+          const newVideoId = message.data.videoId;
+          if (newVideoId !== currentVideoId) {
+            setCurrentVideoId(newVideoId);
           }
         }
-      });
-
+      };
+      
+      chrome.runtime.onMessage.addListener(messageListener);
     }
-  }, []);
+
+    return () => {
+      if (messageListener) {
+        chrome.runtime.onMessage.removeListener(messageListener);
+      }
+    };
+  }, [currentVideoId]);
+
+  useEffect(() => {
+    const processTranscript = async () => {
+      if (!currentVideoId) return;
+      
+      setIsProcessingTranscript(true);
+      try {
+        const response = await axios.get(`http://localhost:8000/public/transcript/${currentVideoId}`);
+        if (response.data.status === "completed") {
+          console.log("Transcript processing completed");
+        }
+      } catch (error) {
+        console.error("Error processing transcript:", error);
+      } finally {
+        setIsProcessingTranscript(false);
+      }
+    };
+
+    processTranscript();
+  }, [currentVideoId]);
 
   const handlePromptSubmit = async (userPrompt) => {
     setResults(prev => [...prev, { 
@@ -111,7 +129,6 @@ function App() {
 
     setIsStreaming(true);
     setCurrentStreamingText('');
-
 
     try {
       const contextResponse = await axios.post(
@@ -146,12 +163,19 @@ function App() {
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
-            const data = line.slice(5);
+            const data = line.slice(5).trim();
+            
+            // Handle the [DONE] message separately
             if (data === '[DONE]') {
               setIsStreaming(false);
-              // Extract timestamps from the complete response
+              console.log("Full response before timestamp extraction:", fullResponse);
               const newTimestamps = extractTimestamps(fullResponse);
-              setTimestamps(prev => [...new Set([...prev, ...newTimestamps])]);
+              console.log("Setting new timestamps:", newTimestamps);
+              setTimestamps(prev => {
+                const combined = [...new Set([...prev, ...newTimestamps])];
+                console.log("Combined timestamps:", combined);
+                return combined;
+              });
               
               setResults(prev => [...prev, { 
                 text: fullResponse,
@@ -161,6 +185,7 @@ function App() {
               break;
             }
 
+            // Only try to parse JSON for actual content
             try {
               const parsed = JSON.parse(data);
               if (parsed.content) {
@@ -168,7 +193,7 @@ function App() {
                 setCurrentStreamingText(prev => prev + parsed.content);
               }
             } catch (e) {
-              console.error('Error parsing streaming data:', e);
+              console.error('Error parsing streaming data:', e, 'Raw data:', data);
             }
           }
         }
