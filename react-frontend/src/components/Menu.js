@@ -22,15 +22,7 @@ const Menu = ({ searches = [], logout }) => {
 
   return (
     <div className="menu" onClick={(e) => e.stopPropagation()}>
-      <div className="menu-header">Searches</div>
-      
-      <div className="search-list">
-        {searches.map((search, index) => (
-          <div key={index} className="search-item">
-            {search}
-          </div>
-        ))}
-      </div>
+      <div className="menu-header"><img src="https://hackville.s3.us-east-1.amazonaws.com/hacklogo.png" alt="App Logo" className="menuLogo" /><h3>Xccel</h3></div>
 
       <div className="api-key-section">
         <label className="api-key-label">OPEN AI KEY</label>

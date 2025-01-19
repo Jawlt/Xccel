@@ -96,7 +96,7 @@ function App() {
       <div className="LoginPopup">
         <div className="LoginModal">
           <img src="https://hackville.s3.us-east-1.amazonaws.com/hacklogo.png" alt="App Logo" className="LoginLogo" />
-          <h2>Welcome to the Xccel</h2>
+          <h2>Welcome to Xccel</h2>
           <p>Please log in to continue.</p>
           <button onClick={handleLogin}>Log In</button>
         </div>
