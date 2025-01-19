@@ -56,13 +56,13 @@ function App() {
   }, [isAuthenticated, user]); // Runs when isAuthenticated or user changes
 
   // Function to simulate streaming responses
-  const simulateStreamingResponse = async (prompt) => {
-    const timestamp = extractTimestamp(prompt);
+  const simulateStreamingResponse = async (user_prompt) => {
+    const timestamp = extractTimestamp(user_prompt);
     if (timestamp) {
       setTimestamps(prev => [...prev, timestamp]);
     }
 
-    const response = `This is a sample response to: ${prompt}`;
+    const response = `**Search: ${user_prompt}**`;
     setIsStreaming(true);
     let streamedText = '';
     
@@ -78,8 +78,8 @@ function App() {
   };
 
   // Handle prompt submission
-  const handlePromptSubmit = (prompt) => {
-    simulateStreamingResponse(prompt);
+  const handlePromptSubmit = (user_prompt) => {
+    simulateStreamingResponse(user_prompt);
   };
 
   // Handle popup login
@@ -116,6 +116,7 @@ function App() {
         results={results} 
         isStreaming={isStreaming}
         currentStreamingText={currentStreamingText}
+        user={user}
       />
       <PromptBar onSubmit={handlePromptSubmit} />
     </div>

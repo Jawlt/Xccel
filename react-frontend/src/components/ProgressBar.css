@@ -62,7 +62,7 @@
   position: absolute;
   width: 4px;
   height: 100%;
-  background-color: #FFD700;
+  background-color: #DE478F;
   cursor: pointer;
   z-index: 3;
   transition: transform 0.2s ease;
@@ -77,9 +77,9 @@
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #FFD700;
-  color: #8D2C4A;
-  padding: 4px 6px;
+  background-color: #DE478F;
+  color: #FCF0D5;
+  padding: 4px 4px;
   border-radius: 4px;
   font-size: 10px;
   white-space: nowrap;
