@@ -9,6 +9,17 @@ const Menu = ({ searches = [], logout }) => {
     console.log('API Key submitted:', apiKey);
   };
 
+  const handleLogout = () => {
+    // Determine the environment
+    const isChromeExtension = window.location.protocol === 'chrome-extension:';
+    const returnToUrl = isChromeExtension
+      ? `chrome-extension://${chrome.runtime.id}/logout` // For Chrome Extension
+      : `${window.location.origin}`; // For web app
+
+    // Trigger the logout with the correct return URL
+    logout({ returnTo: returnToUrl });
+  };
+
   return (
     <div className="menu" onClick={(e) => e.stopPropagation()}>
       <div className="menu-header">Searches</div>
@@ -37,7 +48,7 @@ const Menu = ({ searches = [], logout }) => {
         </div>
       </div>
 
-      <button className="logout-button" onClick={() => logout({ returnTo: window.location.origin })}>
+      <button className="logout-button" onClick={handleLogout}>
         Log Out
       </button>
     </div>

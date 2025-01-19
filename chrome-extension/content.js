@@ -1,5 +1,16 @@
 console.log("Video tracking content script loaded!");
 
+window.requestMicrophoneAccess = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Microphone access granted:', stream);
+      return true; // Access granted
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      return false; // Access denied
+    }
+  };
+
 // Function to get current video time and progress
 function getVideoTime() {
   const video = document.querySelector('video');

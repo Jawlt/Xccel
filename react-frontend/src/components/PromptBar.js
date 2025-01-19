@@ -24,18 +24,23 @@ const PromptBar = ({ onSubmit }) => {
     setIsListening(false);
   };
 
-  const handleMicClick = () => {
+  const handleMicClick = async () => {
     if (isListening) {
       stopRecognition();
       return;
     }
 
+    // Check if speech recognition is supported
     if (!('webkitSpeechRecognition' in window)) {
       alert('Speech recognition is not supported in this browser. Please use Google Chrome or a compatible browser.');
       return;
     }
 
     try {
+      // Request microphone permissions
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // Set up speech recognition
       const recognition = new window.webkitSpeechRecognition();
       recognitionRef.current = recognition;
 
@@ -55,15 +60,8 @@ const PromptBar = ({ onSubmit }) => {
 
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
-        switch (event.error) {
-          case 'not-allowed':
-            alert('Please allow microphone access to use speech recognition.');
-            break;
-          case 'aborted':
-            console.log('Speech recognition aborted.');
-            break;
-          default:
-            alert('Speech recognition error. Please try again.');
+        if (event.error === 'not-allowed') {
+          alert('Please allow microphone access to use speech recognition.');
         }
         stopRecognition();
       };
@@ -74,9 +72,8 @@ const PromptBar = ({ onSubmit }) => {
 
       recognition.start();
     } catch (error) {
-      console.error('Speech recognition setup error:', error);
-      alert('Failed to start speech recognition. Please try again.');
-      stopRecognition();
+      console.error('Error accessing the microphone:', error);
+      alert('Microphone access is required to use speech recognition. Please allow microphone access.');
     }
   };
 
