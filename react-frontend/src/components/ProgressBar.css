@@ -5,6 +5,16 @@
   top: 0;
   left: 0;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-display {
+  color: #8D2C4A;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .url-container {
@@ -24,6 +34,7 @@
   font-size: 14px;
   position: relative;
   z-index: 2;
+  overflow: ellipse;
 }
 
 .progress-bar {
