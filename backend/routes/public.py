@@ -213,6 +213,7 @@ async def update_user(request: Request):
                 "name": name,
                 "email": email,
                 "picture": picture,
+                "apiKey": "",
             },
             "$setOnInsert": {"id": user_id},
         },

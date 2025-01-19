@@ -9,7 +9,6 @@ import './App.css';
 
 function App() {
   const [results, setResults] = useState([]);
-  const [searches] = useState(['3:21', '3:21', '3:21']);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
   const [timestamps, setTimestamps] = useState([]);
@@ -100,6 +99,7 @@ function App() {
           }
         }
       });
+
     }
   }, []);
 
@@ -111,6 +111,7 @@ function App() {
 
     setIsStreaming(true);
     setCurrentStreamingText('');
+
 
     try {
       const contextResponse = await axios.post(
@@ -200,7 +201,8 @@ function App() {
     return (
       <div className="LoginPopup">
         <div className="LoginModal">
-          <h2>Welcome to the App</h2>
+          <img src="https://hackville.s3.us-east-1.amazonaws.com/hacklogo.png" alt="App Logo" className="LoginLogo" />
+          <h2>Welcome to Xccel</h2>
           <p>Please log in to continue.</p>
           <button onClick={handleLogin}>Log In</button>
         </div>
@@ -211,7 +213,7 @@ function App() {
   return (
     <div className="App">
       <ProgressBar timestamps={timestamps} />
-      <UserProfile user={user} searches={searches} logout={logout}/>
+      <UserProfile user={user} logout={logout}/>
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

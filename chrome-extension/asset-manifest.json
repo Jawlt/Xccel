@@ -2,9 +2,11 @@
   "files": {
     "main.css": "/static/css/main.1dcd2e8b.css",
     "main.js": "/static/js/main.bdaf734c.js",
+
     "static/js/488.ee97bdc1.chunk.js": "/static/js/488.ee97bdc1.chunk.js",
     "static/media/gpt-logo.png": "/static/media/gpt-logo.e13e40a896d1b51d70b8.png",
     "index.html": "/index.html",
+
     "main.1dcd2e8b.css.map": "/static/css/main.1dcd2e8b.css.map",
     "main.bdaf734c.js.map": "/static/js/main.bdaf734c.js.map",
     "488.ee97bdc1.chunk.js.map": "/static/js/488.ee97bdc1.chunk.js.map"
@@ -12,5 +14,6 @@
   "entrypoints": [
     "static/css/main.1dcd2e8b.css",
     "static/js/main.bdaf734c.js"
+
   ]
 }

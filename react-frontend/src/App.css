@@ -35,6 +35,12 @@ input, button {
   background-color: #FCF0D5;
 }
 
+.LoginLogo {
+  display: block;
+  margin: 0 auto;
+  max-width: 120px;
+}
+
 .LoginModal {
   background-color: rgba(141, 44, 74, 0.1);
   color: #8D2C4A;
