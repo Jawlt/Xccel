@@ -1,4 +1,8 @@
-# hackville2025
+# Xccel
+
+# Hackathon: Hackville 2025
+
+# Devpost: https://devpost.com/software/xccel
 
 # Running Front End
 
@@ -8,6 +12,13 @@ npm install
 
 npm start
 
+# Running Front End
+
+cd react-frontend
+
+npm install
+
+npm start
 
 # Backend Steps
 
@@ -22,7 +33,6 @@ venv\Scripts\activate (on Windows)
 .\venv\Scripts\activate (on PowerShell)
 
 pip install -r requirements.txt
-
 
 # Running Chrome Extension on Chrome Web Browser
 
