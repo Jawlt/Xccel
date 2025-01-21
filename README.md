@@ -57,6 +57,20 @@ If first time running the chrome extension, click load unpacked and select the c
 
 If already uploaded the project folder, then just refresh and changes will update.
 
+## 1. Setting Up Environment Variables
+
+We have provided a setup script to help you configure your environment variables quickly.
+
+### Steps to Set Up:
+
+1. **Ensure you are in the project's root directory**, where the `setup_env.sh` script is located.
+
+2. **Run the environment setup script** to copy the required `.env` files:
+
+   ```bash
+   bash setup_env.sh
+   ```
+
 ## Acknowledgment
 
 This project utilizes [Socialify](https://socialify.git.ci/) for generating stylish repository previews.
