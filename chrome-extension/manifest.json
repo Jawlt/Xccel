@@ -3,8 +3,16 @@
   "name": "Xccel",
   "version": "1.0",
   "description": "A Chrome extension built during Hackville 2025 for students.",
-  "permissions": ["activeTab", "storage", "scripting"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.auth0.com/*",
+    "*://*.youtube.com/*",
+    "<all_urls>"
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -23,10 +31,19 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>", "*://*.youtube.com/*"],
+      "matches": ["*://*.youtube.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html"],
+      "matches": ["*://*/*"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';",
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' https://cdn.auth0.com; object-src 'self'"
+  }
 }
-

@@ -7,7 +7,7 @@ import UserProfile from './components/UserProfile';
 import ResultsArea from './components/ResultsArea';
 import './App.css';
 
-function App() {
+function App({redirectUri, logoutUri}) {
   const [results, setResults] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
@@ -211,7 +211,9 @@ function App() {
 
   const handleLogin = async () => {
     try {
-      await loginWithPopup();
+      await loginWithPopup({
+        redirectUri: redirectUri,
+      });
       console.log("Logged in user:", user);
     } catch (error) {
       console.error("Login failed:", error);
@@ -238,7 +240,7 @@ function App() {
   return (
     <div className="App">
       <ProgressBar timestamps={timestamps} />
-      <UserProfile user={user} logout={logout}/>
+      <UserProfile user={user} logout={logout} logoutUri={logoutUri}/>
       <ResultsArea 
         results={results} 
         isStreaming={isStreaming}

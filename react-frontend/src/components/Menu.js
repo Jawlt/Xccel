@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Menu.css';
 
-const Menu = ({ user, logout }) => {
+const Menu = ({ user, logout, logoutUri }) => {
   const [apiKey, setApiKey] = useState('');
   const [placeholderKey, setPlaceholderKey] = useState('');
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -45,12 +45,11 @@ const Menu = ({ user, logout }) => {
   };
 
   const handleLogout = () => {
-    const isChromeExtension = window.location.protocol === 'chrome-extension:';
-    const returnToUrl = isChromeExtension
-      ? `chrome-extension://${chrome.runtime.id}/logout`
-      : `${window.location.origin}`;
-
-    logout({ returnTo: returnToUrl });
+    logout({
+      logoutParams: {
+        returnTo: logoutUri,
+      }
+    });
   };
 
   return (

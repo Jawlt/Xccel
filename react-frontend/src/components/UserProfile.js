@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Menu from './Menu';
 import './UserProfile.css';
 
-const UserProfile = ({ user, logout }) => {
+const UserProfile = ({ user, logout, logoutUri }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = () => {
@@ -20,7 +20,7 @@ const UserProfile = ({ user, logout }) => {
       </div>
       {showMenu && (
         <div className="menu-wrapper">
-          <Menu user={user} logout={logout} onClose={() => setShowMenu(false)} />
+          <Menu user={user} logout={logout} logoutUri={logoutUri} onClose={() => setShowMenu(false)} />
         </div>
       )}
     </div>
