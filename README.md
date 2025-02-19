@@ -54,13 +54,6 @@ pip install -r requirements.txt
 
 # Running Chrome Extension on Chrome Web Browser
 
-```bash
-cd react-frontend
-```
-```bash
-npm run build
-```
-
 (After build is made):
 1. Remove static folder, index.html, and asset-manifest.json from chrome-extension folder
 2. Copy the static folder, index.html, and asset-manifest.json from react-frontend/build and paste into chrome-extension folder

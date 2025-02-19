@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# Change directory to react-frontend and build the project
+cd react-frontend 
+npm run build
+cd ..
+
 # Remove old files
 rm -rf chrome-extension/static chrome-extension/asset-manifest.json chrome-extension/index.html
 
