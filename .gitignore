@@ -38,11 +38,6 @@ dist/
 node_modules/
 jspm_packages/
 
-# Chrome extension
-
-chrome-extension/static/
-chrome-extension/popup.html
-
 # Snowpack dependency directory (https://snowpack.dev/)
 
 web_modules/
@@ -142,3 +137,7 @@ temp/
 venv/
 *.pyc
 __pycache__/
+
+
+# Chrome extension folder
+chrome-extension/

@@ -94,8 +94,8 @@ async def get_transcript(video_id: str):
             return {"transcript": existing_documents["text"], "status": "completed"}
         
         print("No transcript found in the database. Fetching from YouTube...")
-        youtube_collection.delete_many({})
-        print("Cleared all existing documents from the collection.")
+        youtube_collection.delete_many({"videoId": video_id})
+        print(f"Cleared existing documents for video_id: {video_id}")
         
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         chunks = create_text_chunks(transcript)

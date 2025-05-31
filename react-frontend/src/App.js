@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import ProgressBar from './components/ProgressBar';
@@ -14,6 +14,7 @@ function App({redirectUri, logoutUri}) {
   const [timestamps, setTimestamps] = useState([]);
   const [currentVideoId, setCurrentVideoId] = useState(null);
   const [isProcessingTranscript, setIsProcessingTranscript] = useState(false);
+  const processedVideos = useRef(new Set());
 
   const extractTimestamps = (text) => {
     console.log("Extracting timestamps from:", text);
@@ -105,11 +106,19 @@ function App({redirectUri, logoutUri}) {
     const processTranscript = async () => {
       if (!currentVideoId) return;
       
+      // Skip if we've already processed this video
+      if (processedVideos.current.has(currentVideoId)) {
+        console.log(`Video ${currentVideoId} already processed, skipping`);
+        return;
+      }
+      
       setIsProcessingTranscript(true);
       try {
         const response = await axios.get(`http://localhost:8000/public/transcript/${currentVideoId}`);
         if (response.data.status === "completed") {
           console.log("Transcript processing completed");
+          // Add to processed set only when successful
+          processedVideos.current.add(currentVideoId);
         }
       } catch (error) {
         console.error("Error processing transcript:", error);
